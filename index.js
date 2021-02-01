@@ -3,6 +3,7 @@ require('dotenv').config();
 const { Client, MessageEmbed, Collection, MessageAttachment } = require("discord.js");
 const client = new Client();
 client.comandos = new Collection();
+client.tickets = new Collection();
 const fs = require("fs");
 
 let comandos = fs.readdirSync('./comandos').filter((f) => f.endsWith(".js"));
