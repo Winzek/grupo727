@@ -22,7 +22,7 @@ module.exports = {
                 if (!args[1]) return message.channel.send("Debes especificar un ID");
                 const userTicket = await message.guild.members.cache.get(args[1]);
                 if (!userTicket) return message.channel.send("Usuario no encontrado");
-                const canal = await message.guild.channels.create(`${userTicket.nickname ?? userTicket.username}`, {
+                message.guild.channels.create(`${userTicket.nickname ?? userTicket.username}`, {
                     type: 'text',
                     topic: userTicket.id,
                     parent: "805698548389511198",
@@ -30,16 +30,31 @@ module.exports = {
                         {
                             id: message.guild.id,
                             deny: [
-                                'SEND_MESSAGES',
-                                "READ_MESSAGE_HISTORY"
-                                // "READ_MESSAGES"
+                                'VIEW_CHANNEL'
                             ]
                         },
                         {
                             id: userTicket.id,
                             allow: [
-                                'SEND_MESSAGES',
-                                // "READ_MESSAGES"
+                                'VIEW_CHANNEL'
+                            ]
+                        }
+                    ]
+                });
+                message.guild.channels.create(`${userTicket.nickname ?? userTicket.username}`, {
+                    type: 'voice',
+                    parent: "805698548389511198",
+                    permissionOverwrites: [
+                        {
+                            id: message.guild.id,
+                            deny: [
+                                'VIEW_CHANNEL'
+                            ]
+                        },
+                        {
+                            id: userTicket.id,
+                            allow: [
+                                'VIEW_CHANNEL'
                             ]
                         }
                     ]
@@ -58,6 +73,7 @@ module.exports = {
                     .setTimestamp();
                 message.guild.channels.cache.map(ch => {
                     if (ch.topic == userTicket.id) ch.delete();
+                    if (ch.type == 'voice' && (ch.name == userTicket.nickname || ch.name == userTicket.username)) ch.delete();
                 });
                 tm.send(embed);
                 client.tickets.set(message.author.id, false);
